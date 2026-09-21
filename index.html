@@ -16,7 +16,7 @@
 .rp-cover .rp-sub{font-size:12px;opacity:.86}
 .rp-id{display:inline-block;margin-top:12px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:5px 11px;font-size:10px;letter-spacing:.08em;font-weight:800}
 .rp-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
-.rp-strip div{background:#f2f8f8;border:1px solid #dbe8ea;border-radius:12px;padding:99px 10px}
+.rp-strip div{background:#f2f8f8;border:1px solid #dbe8ea;border-radius:12px;padding:9px 10px}
 .rp-strip b{display:block;font-size:14px;color:#0f6b50}
 .rp-strip span{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#7b9198;font-weight:800}
 .rp h2{font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:#0f8f66;margin:26px 0 10px;padding-bottom:6px;border-bottom:2px solid #d9ece4}
@@ -208,7 +208,7 @@ table.rp-tb tr.flag td.v,table.rp-tb tr.flag td.st{color:#c6454f;font-weight:800
         <div class="landmark-panel card">
           <div class="landmark-progress"><div><b style="font-size:13px">Pontos anatômicos</b><div class="small" id="progressText">0 de 0 marcados</div></div></div>
           <div class="progressbar"><i id="progressFill"></i></div>
-          <div class="point-list" id="pointList" style="margin-top:99px"></div>
+          <div class="point-list" id="pointList" style="margin-top:9px"></div>
           <div class="legend"><span><i style="background:#14b67f"></i>manual / ajustado</span><span><i style="background:#3f9fe0"></i>estimado pela IA</span><span><i style="background:#ef5a67"></i>próximo na marcação guiada</span><span><i style="background:#dcc7a6"></i>exige palpação</span></div>
           <div class="storage-note" id="storageNote"></div>
         </div>
@@ -606,9 +606,7 @@ function autoSummary(){
  if(!parts.length)parts.push('Avaliação postural em andamento. Marque os pontos anatômicos e confirme os achados para gerar a síntese.');
  if(aiCount())parts.push('Parte dos marcos ('+aiCount()+') foi estimada por visão computacional e revisada pelo avaliador; os pontos dependentes de palpação foram demarcados manualmente.');
  parts.push('Os achados fotogramétricos devem ser interpretados em conjunto com a avaliação clínica e funcional, não constituindo diagnóstico isolado.');
- clinicalSummary.value=parts.join('
-
-');
+ clinicalSummary.value=parts.join('\n\n');
 }
 function renderMiniSummary(){
  const totalPts=Object.keys(state.points).reduce((s,v)=>s+Object.keys(state.points[v]).length,0);
@@ -709,14 +707,12 @@ function closeReport(){reportModal.classList.remove('show')}
 function reportStyles(){
  let out='';
  for(const sheet of Array.from(document.styleSheets)){
-  try{for(const rule of Array.from(sheet.cssRules)){const t=rule.cssText;if(t.indexOf('.rp')>=0||t.indexOf('@media print')>=0)out+=t+'
-'}}catch(e){}
+  try{for(const rule of Array.from(sheet.cssRules)){const t=rule.cssText;if(t.indexOf('.rp')>=0||t.indexOf('@media print')>=0)out+=t+'\n'}}catch(e){}
  }
  return out;
 }
 function reportDocumentHtml(){
- return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>REHAB • Laudo Postural'+(patientName.value?' — '+esc(patientName.value):'')+'</title><style>body{margin:0;padding:22px;background:#eef3f4;font-family:Arial,Helvetica,sans-serif}.wrap{max-width:900px;margin:auto;background:#fff;padding:26px;border-radius:16px}@media print{body{background:#fff;padding:0}.wrap{padding:0;border-radius:0}}
-'+reportStyles()+'.printbar{max-width:900px;margin:0 auto 12px;text-align:right}.printbar button{border:0;border-radius:12px;padding:11px 16px;font-weight:800;font-size:14px;background:linear-gradient(180deg,#14b67f,#0f8f66);color:#fff;cursor:pointer}@media print{.printbar{display:none!important}}</style></head><body><div class="printbar"><button onclick="window.print()">Imprimir / salvar PDF</button></div><div class="wrap">'+reportContent.innerHTML+'</div></body></html>';
+ return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>REHAB • Laudo Postural'+(patientName.value?' — '+esc(patientName.value):'')+'</title><style>body{margin:0;padding:22px;background:#eef3f4;font-family:Arial,Helvetica,sans-serif}.wrap{max-width:900px;margin:auto;background:#fff;padding:26px;border-radius:16px}@media print{body{background:#fff;padding:0}.wrap{padding:0;border-radius:0}}\n'+reportStyles()+'.printbar{max-width:900px;margin:0 auto 12px;text-align:right}.printbar button{border:0;border-radius:12px;padding:11px 16px;font-weight:800;font-size:14px;background:linear-gradient(180deg,#14b67f,#0f8f66);color:#fff;cursor:pointer}@media print{.printbar{display:none!important}}</style></head><body><div class="printbar"><button onclick="window.print()">Imprimir / salvar PDF</button></div><div class="wrap">'+reportContent.innerHTML+'</div></body></html>';
 }
 const fileBase=()=>'REHAB-laudo-postural-'+(patientName.value||'paciente').trim().replace(/\s+/g,'-');
 function downloadHtml(){
@@ -726,8 +722,7 @@ function downloadHtml(){
 async function shareReport(){
  if(!reportContent.innerHTML.trim())await openReport();
  const html=reportDocumentHtml(),file=new File([html],fileBase()+'.html',{type:'text/html'});
- const text='REHAB • Laudo de Avaliação Postural'+(patientName.value?'
-Paciente: '+patientName.value:'');
+ const text='REHAB • Laudo de Avaliação Postural'+(patientName.value?'\nPaciente: '+patientName.value:'');
  try{
   if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){await navigator.share({title:'REHAB • Avaliação Postural',text:text,files:[file]});return}
   if(navigator.share){await navigator.share({title:'REHAB • Avaliação Postural',text:text});return}
@@ -770,12 +765,7 @@ async function saveDrive(){
 }
 function whatsappUrl(){
  const phone=(teacherPhone.value||'').replace(/\D/g,'');
- const msg='*REHAB • Laudo de Avaliação Postural*
-Paciente: '+(patientName.value||'—')+'
-Data: '+formatDate(evalDate.value)+'
-Protocolo: '+state.recordId+'
-
-Laudo completo: '+state.reportUrl;
+ const msg='*REHAB • Laudo de Avaliação Postural*\nPaciente: '+(patientName.value||'—')+'\nData: '+formatDate(evalDate.value)+'\nProtocolo: '+state.recordId+'\n\nLaudo completo: '+state.reportUrl;
  return phone?'https://api.whatsapp.com/send?phone='+phone+'&text='+encodeURIComponent(msg):'https://api.whatsapp.com/send?text='+encodeURIComponent(msg);
 }
 function sendToTeacher(){
