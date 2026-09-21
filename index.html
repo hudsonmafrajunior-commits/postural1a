@@ -340,7 +340,7 @@ function drawDefaultBody(g,view){
  g.translate(400,0);g.fillStyle='#dfeaec';g.strokeStyle='#a9c1c6';g.lineWidth=3;
  const circle=(x,y,r)=>{g.beginPath();g.arc(x,y,r,0,Math.PI*2);g.fill();g.stroke()};
  const ellipse=(x,y,rx,ry)=>{g.beginPath();g.ellipse(x,y,rx,ry,0,0,Math.PI*2);g.fill();g.stroke()};
- const roundShape=(x,y,w,h,r)=>{g.beginPath();g.roundRect(x,y,w,h,r);g.fill();g.stroke()};
+ const roundShape=(x,y,w,h,r)=>{g.beginPath();if(g.roundRect){try{g.roundRect(x,y,w,h,Math.min(r,Math.abs(w)/2,Math.abs(h)/2))}catch(e){g.rect(x,y,w,h)}}else{g.rect(x,y,w,h)}g.fill();g.stroke()};
  const limb=(x1,y1,x2,y2,w)=>{g.lineCap='round';g.strokeStyle='#a9c1c6';g.lineWidth=w+6;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();g.strokeStyle='#dfeaec';g.lineWidth=w;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();g.strokeStyle='#a9c1c6';g.lineWidth=3};
  if(view==='front'||view==='back'){ellipse(0,115,62,78);roundShape(-72,185,144,300,55);const sh=female?128:145,hp=female?112:98;limb(-sh,230,-200,570,36);limb(sh,230,200,570,36);limb(-hp,475,-108,1040,44);limb(hp,475,108,1040,44);circle(-112,1060,30);circle(112,1060,30)}
  else{ellipse(0,115,57,78);roundShape(-55,185,110,300,45);limb(-5,235,55,575,34);limb(12,475,28,1040,44);circle(28,1062,30)}
